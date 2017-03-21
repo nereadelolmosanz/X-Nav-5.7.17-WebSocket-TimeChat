@@ -3,6 +3,7 @@
 # Original taken from: https://github.com/opiate/SimpleWebSocketServer
 # Under the MIT license
 
+import time
 import signal
 import sys
 import ssl
@@ -37,10 +38,14 @@ class SimpleChat(WebSocket):
         if self.data is None:
             self.data = ''
 
+        if str(self.data) == "getTime":
+            self.data = time.ctime()
+            self.sendMessage(str(self.address[0]) + ":" + str(self.address[1]) + ' - ' + str(self.data))
+
         for client in self.server.connections.itervalues():
             if client != self:
                 try:
-                    client.sendMessage(str(self.address[0]) + ' - ' + str(self.data))
+                    client.sendMessage(str(self.address[0]) + ":" + str(self.address[1]) + ' - ' + str(self.data))
                 except Exception as n:
                     print n
 
@@ -49,7 +54,7 @@ class SimpleChat(WebSocket):
         for client in self.server.connections.itervalues():
             if client != self:
                 try:
-                    client.sendMessage(str(self.address[0]) + ' - connected')
+                    client.sendMessage(str(self.address[0]) + ":" + str(self.address[1]) + ' - connected')
                 except Exception as n:
                     print n
 
@@ -58,7 +63,7 @@ class SimpleChat(WebSocket):
         for client in self.server.connections.itervalues():
             if client != self:
                 try:
-                    client.sendMessage(str(self.address[0]) + ' - disconnected')
+                    client.sendMessage(str(self.address[0]) + ":" + str(self.address[1]) + ' - disconnected')
                 except Exception as n:
                     print n
 
